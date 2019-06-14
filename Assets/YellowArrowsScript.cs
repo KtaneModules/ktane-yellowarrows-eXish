@@ -111,6 +111,7 @@ public class YellowArrowsScript : MonoBehaviour {
         }
         numDisplay.GetComponent<TextMesh>().text = "GG";
         StopCoroutine("victory");
+        Debug.LogFormat("[Yellow Arrows #{0}] All Presses were correct! Module Disarmed!", moduleId);
         GetComponent<KMBombModule>().HandlePass();
         moduleSolved = true;
     }
@@ -124,7 +125,13 @@ public class YellowArrowsScript : MonoBehaviour {
         string num = ""+bomb.GetSerialNumber().ElementAt(5);
         int.TryParse(num, out offset);
         offset += 1;
-        for(int i = 0; i < 5; i++)
+        int next = Array.IndexOf(letters, letter) + offset;
+        if (next > 25)
+        {
+            next %= 26;
+        }
+        letter = letters[next];
+        for (int i = 0; i < 5; i++)
         {
             if (letter.Equals("A"))
             {
@@ -403,13 +410,13 @@ public class YellowArrowsScript : MonoBehaviour {
             {
                 moves[i] = "RIGHT";
             }
-            int next = Array.IndexOf(letters, letter) + offset;
-            if (next > 25)
+            int next2 = Array.IndexOf(letters, letter) + offset;
+            if (next2 > 25)
             {
-                next %= 26;
+                next2 %= 26;
             }
             Debug.LogFormat("[Yellow Arrows #{0}] Press #{1} should be '{2}' according to row '{3}'!", moduleId, i+1, moves[i], letter);
-            letter = letters[next];
+            letter = letters[next2];
         }
         StopCoroutine("getMoves");
     }
@@ -428,6 +435,7 @@ public class YellowArrowsScript : MonoBehaviour {
             yield return new WaitForSeconds(0.5f);
             current = 0;
             numDisplay.GetComponent<TextMesh>().text = "" + letters[letindex];
+            Debug.LogFormat("[Yellow Arrows #{0}] Module Reset back to initial state (no inputs)!", moduleId);
             yield break;
         }
 
