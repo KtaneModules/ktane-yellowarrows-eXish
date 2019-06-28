@@ -15,7 +15,10 @@ public class YellowArrowsScript : MonoBehaviour {
     public GameObject numDisplay;
 
     private string[] moves = new string[5];
+    private string[] movesperf = new string[5];
     private string[] letters = { "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z" };
+    private string letter;
+    private int offset;
     private int current;
     private int letindex;
 
@@ -73,10 +76,28 @@ public class YellowArrowsScript : MonoBehaviour {
             }
             else
             {
+                if(pressed == buttons[0])
+                {
+                    movesperf[current] = "UP";
+                }else if (pressed == buttons[1])
+                {
+                    movesperf[current] = "DOWN";
+                }else if (pressed == buttons[2])
+                {
+                    movesperf[current] = "LEFT";
+                }else if (pressed == buttons[3])
+                {
+                    movesperf[current] = "RIGHT";
+                }
                 current++;
-                if(current == 5)
+                if (current == 5)
                 {
                     StartCoroutine(victory());
+                }
+                else
+                {
+                    StartCoroutine(getMoves());
+                    moduleSolved = true;
                 }
             }
         }
@@ -91,6 +112,7 @@ public class YellowArrowsScript : MonoBehaviour {
         StopCoroutine("generateNewLet");
         Debug.LogFormat("[Yellow Arrows #{0}] The Starting row is '{1}'!", moduleId, letters[rando]);
         letindex = rando;
+        letter = letters[letindex];
     }
 
     private IEnumerator victory()
@@ -120,9 +142,7 @@ public class YellowArrowsScript : MonoBehaviour {
     {
         yield return null;
         yield return new WaitForSeconds(0.5f);
-        string letter = letters[letindex];
-        int offset;
-        string num = ""+bomb.GetSerialNumber().ElementAt(5);
+        string num = "" + bomb.GetSerialNumber().ElementAt(5);
         int.TryParse(num, out offset);
         offset += 1;
         int next = Array.IndexOf(letters, letter) + offset;
@@ -131,294 +151,288 @@ public class YellowArrowsScript : MonoBehaviour {
             next %= 26;
         }
         letter = letters[next];
-        for (int i = 0; i < 5; i++)
+        if (letter.Equals("A"))
         {
-            if (letter.Equals("A"))
-            {
-                moves[i] = "UP";
-            }else if (letter.Equals("B"))
-            {
-                if(i != 0)
-                {
-                    if (moves[i - 1].Equals("LEFT"))
-                    {
-                        moves[i] = "DOWN";
-                    }
-                    else
-                    {
-                        moves[i] = "RIGHT";
-                    }
-                }
-                else
-                {
-                    moves[i] = "RIGHT";
-                }
-            }
-            else if (letter.Equals("C"))
-            {
-                if((offset-1) == 3){
-                    moves[i] = "LEFT";
-                }
-                else
-                {
-                    moves[i] = "UP";
-                }
-            }
-            else if (letter.Equals("D"))
-            {
-                if(letters[letindex].Equals("D"))
-                {
-                    moves[i] = "UP";
-                }
-                else
-                {
-                    moves[i] = "DOWN";
-                }
-            }
-            else if (letter.Equals("E"))
-            {
-                if (bomb.IsIndicatorPresent("SIG") && bomb.IsIndicatorOn("SIG"))
-                {
-                    moves[i] = "RIGHT";
-                }
-                else
-                {
-                    moves[i] = "LEFT";
-                }
-            }
-            else if (letter.Equals("F"))
-            {
-                if (!bomb.IsPortPresent("PS2"))
-                {
-                    moves[i] = "DOWN";
-                }
-                else
-                {
-                    moves[i] = "ANY";
-                }
-            }
-            else if (letter.Equals("G"))
-            {
-                if (!moves.Contains("DOWN"))
-                {
-                    moves[i] = "UP";
-                }
-                else
-                {
-                    moves[i] = "DOWN";
-                }
-            }
-            else if (letter.Equals("H"))
-            {
-                if (bomb.IsPortPresent("Serial"))
-                {
-                    moves[i] = "ANY";
-                }
-                else
-                {
-                    moves[i] = "RIGHT";
-                }
-            }
-            else if (letter.Equals("I"))
-            {
-                if (bomb.GetModuleNames().Count == bomb.GetSolvableModuleNames().Count)
-                {
-                    moves[i] = "DOWN";
-                }
-                else
-                {
-                    moves[i] = "ANY";
-                }
-            }
-            else if (letter.Equals("J"))
-            {
-                if (i != 0)
-                {
-                    if (moves[i - 1].Equals("DOWN"))
-                    {
-                        moves[i] = "LEFT";
-                    }
-                    else
-                    {
-                        moves[i] = "UP";
-                    }
-                }
-                else
-                {
-                    moves[i] = "UP";
-                }
-            }
-            else if (letter.Equals("K"))
-            {
-                moves[i] = "DOWN";
-            }
-            else if (letter.Equals("L"))
-            {
-                if (bomb.GetBatteryCount() == 0)
-                {
-                    moves[i] = "UP";
-                }
-                else
-                {
-                    moves[i] = "DOWN";
-                }
-            }
-            else if (letter.Equals("M"))
-            {
-                if (bomb.GetBatteryHolderCount() < 3)
-                {
-                    moves[i] = "RIGHT";
-                }
-                else
-                {
-                    moves[i] = "LEFT";
-                }
-            }
-            else if (letter.Equals("N"))
-            {
-                if (letters[letindex].Equals("N"))
-                {
-                    moves[i] = "ANY";
-                }
-                else
-                {
-                    moves[i] = "RIGHT";
-                }
-            }
-            else if (letter.Equals("O"))
-            {
-                if (bomb.GetSerialNumber().Contains("O"))
-                {
-                    moves[i] = "LEFT";
-                }
-                else
-                {
-                    moves[i] = "DOWN";
-                }
-            }
-            else if (letter.Equals("P"))
-            {
-                if (bomb.GetSerialNumberLetters().Count() == 4)
-                {
-                    moves[i] = "DOWN";
-                }
-                else
-                {
-                    moves[i] = "UP";
-                }
-            }
-            else if (letter.Equals("Q"))
-            {
-                if (i != 0)
-                {
-                    if (moves[i - 1].Equals("RIGHT"))
-                    {
-                        moves[i] = "DOWN";
-                    }
-                    else
-                    {
-                        moves[i] = "LEFT";
-                    }
-                }
-                else
-                {
-                    moves[i] = "LEFT";
-                }
-            }
-            else if (letter.Equals("R"))
-            {
-                if (bomb.IsIndicatorPresent("CLR") && bomb.IsIndicatorOff("CLR"))
-                {
-                    moves[i] = "UP";
-                }
-                else
-                {
-                    moves[i] = "DOWN";
-                }
-            }
-            else if (letter.Equals("S"))
-            {
-                moves[i] = "LEFT";
-            }
-            else if (letter.Equals("T"))
-            {
-                if (bomb.GetBatteryCount() % 2 == 0)
-                {
-                    moves[i] = "LEFT";
-                }
-                else
-                {
-                    moves[i] = "DOWN";
-                }
-            }
-            else if (letter.Equals("U"))
-            {
-                moves[i] = "ANY";
-            }
-            else if (letter.Equals("V"))
-            {
-                if (i != 0)
-                {
-                    if (moves[i - 1].Equals("UP"))
-                    {
-                        moves[i] = "UP";
-                    }
-                    else
-                    {
-                        moves[i] = "DOWN";
-                    }
-                }
-                else
-                {
-                    moves[i] = "DOWN";
-                }
-            }
-            else if (letter.Equals("W"))
-            {
-                if (bomb.GetPortPlateCount() == 0)
-                {
-                    moves[i] = "RIGHT";
-                }
-                else
-                {
-                    moves[i] = "ANY";
-                }
-            }
-            else if (letter.Equals("X"))
-            {
-                if (letters[letindex].Equals("X"))
-                {
-                    moves[i] = "UP";
-                }
-                else
-                {
-                    moves[i] = "LEFT";
-                }
-            }
-            else if (letter.Equals("Y"))
-            {
-                if (!moves.Contains("UP"))
-                {
-                    moves[i] = "ANY";
-                }
-                else
-                {
-                    moves[i] = "UP";
-                }
-            }
-            else if (letter.Equals("Z"))
-            {
-                moves[i] = "RIGHT";
-            }
-            int next2 = Array.IndexOf(letters, letter) + offset;
-            if (next2 > 25)
-            {
-                next2 %= 26;
-            }
-            Debug.LogFormat("[Yellow Arrows #{0}] Press #{1} should be '{2}' according to row '{3}'!", moduleId, i+1, moves[i], letter);
-            letter = letters[next2];
+            moves[current] = "UP";
         }
+        else if (letter.Equals("B"))
+        {
+            if (current != 0)
+            {
+                if (movesperf[current - 1].Equals("LEFT"))
+                {
+                    moves[current] = "DOWN";
+                }
+                else
+                {
+                    moves[current] = "RIGHT";
+                }
+            }
+            else
+            {
+                moves[current] = "RIGHT";
+            }
+        }
+        else if (letter.Equals("C"))
+        {
+            if ((offset - 1) == 3)
+            {
+                moves[current] = "LEFT";
+            }
+            else
+            {
+                moves[current] = "UP";
+            }
+        }
+        else if (letter.Equals("D"))
+        {
+            if (letters[letindex].Equals("D"))
+            {
+                moves[current] = "UP";
+            }
+            else
+            {
+                moves[current] = "DOWN";
+            }
+        }
+        else if (letter.Equals("E"))
+        {
+            if (bomb.IsIndicatorPresent("SIG") && bomb.IsIndicatorOn("SIG"))
+            {
+                moves[current] = "RIGHT";
+            }
+            else
+            {
+                moves[current] = "LEFT";
+            }
+        }
+        else if (letter.Equals("F"))
+        {
+            if (!bomb.IsPortPresent("PS2"))
+            {
+                moves[current] = "DOWN";
+            }
+            else
+            {
+                moves[current] = "ANY";
+            }
+        }
+        else if (letter.Equals("G"))
+        {
+            if (!movesperf.Contains("DOWN"))
+            {
+                moves[current] = "UP";
+            }
+            else
+            {
+                moves[current] = "DOWN";
+            }
+        }
+        else if (letter.Equals("H"))
+        {
+            if (bomb.IsPortPresent("Serial"))
+            {
+                moves[current] = "ANY";
+            }
+            else
+            {
+                moves[current] = "RIGHT";
+            }
+        }
+        else if (letter.Equals("I"))
+        {
+            if (bomb.GetModuleNames().Count == bomb.GetSolvableModuleNames().Count)
+            {
+                moves[current] = "DOWN";
+            }
+            else
+            {
+                moves[current] = "ANY";
+            }
+        }
+        else if (letter.Equals("J"))
+        {
+            if (current != 0)
+            {
+                if (movesperf[current - 1].Equals("DOWN"))
+                {
+                    moves[current] = "LEFT";
+                }
+                else
+                {
+                    moves[current] = "UP";
+                }
+            }
+            else
+            {
+                moves[current] = "UP";
+            }
+        }
+        else if (letter.Equals("K"))
+        {
+            moves[current] = "DOWN";
+        }
+        else if (letter.Equals("L"))
+        {
+            if (bomb.GetBatteryCount() == 0)
+            {
+                moves[current] = "UP";
+            }
+            else
+            {
+                moves[current] = "DOWN";
+            }
+        }
+        else if (letter.Equals("M"))
+        {
+            if (bomb.GetBatteryHolderCount() < 3)
+            {
+                moves[current] = "RIGHT";
+            }
+            else
+            {
+                moves[current] = "LEFT";
+            }
+        }
+        else if (letter.Equals("N"))
+        {
+            if (letters[letindex].Equals("N"))
+            {
+                moves[current] = "ANY";
+            }
+            else
+            {
+                moves[current] = "RIGHT";
+            }
+        }
+        else if (letter.Equals("O"))
+        {
+            if (bomb.GetSerialNumber().Contains("O"))
+            {
+                moves[current] = "LEFT";
+            }
+            else
+            {
+                moves[current] = "DOWN";
+            }
+        }
+        else if (letter.Equals("P"))
+        {
+            if (bomb.GetSerialNumberLetters().Count() == 4)
+            {
+                moves[current] = "DOWN";
+            }
+            else
+            {
+                moves[current] = "UP";
+            }
+        }
+        else if (letter.Equals("Q"))
+        {
+            if (current != 0)
+            {
+                if (movesperf[current - 1].Equals("RIGHT"))
+                {
+                    moves[current] = "DOWN";
+                }
+                else
+                {
+                    moves[current] = "LEFT";
+                }
+            }
+            else
+            {
+                moves[current] = "LEFT";
+            }
+        }
+        else if (letter.Equals("R"))
+        {
+            if (bomb.IsIndicatorPresent("CLR") && bomb.IsIndicatorOff("CLR"))
+            {
+                moves[current] = "UP";
+            }
+            else
+            {
+                moves[current] = "DOWN";
+            }
+        }
+        else if (letter.Equals("S"))
+        {
+            moves[current] = "LEFT";
+        }
+        else if (letter.Equals("T"))
+        {
+            if (bomb.GetBatteryCount() % 2 == 0)
+            {
+                moves[current] = "LEFT";
+            }
+            else
+            {
+                moves[current] = "DOWN";
+            }
+        }
+        else if (letter.Equals("U"))
+        {
+            moves[current] = "ANY";
+        }
+        else if (letter.Equals("V"))
+        {
+            if (current != 0)
+            {
+                if (movesperf[current - 1].Equals("UP"))
+                {
+                    moves[current] = "UP";
+                }
+                else
+                {
+                    moves[current] = "DOWN";
+                }
+            }
+            else
+            {
+                moves[current] = "DOWN";
+            }
+        }
+        else if (letter.Equals("W"))
+        {
+            if (bomb.GetPortPlateCount() == 0)
+            {
+                moves[current] = "RIGHT";
+            }
+            else
+            {
+                moves[current] = "ANY";
+            }
+        }
+        else if (letter.Equals("X"))
+        {
+            if (letters[letindex].Equals("X"))
+            {
+                moves[current] = "UP";
+            }
+            else
+            {
+                moves[current] = "LEFT";
+            }
+        }
+        else if (letter.Equals("Y"))
+        {
+            if (!movesperf.Contains("UP"))
+            {
+                moves[current] = "ANY";
+            }
+            else
+            {
+                moves[current] = "UP";
+            }
+        }
+        else if (letter.Equals("Z"))
+        {
+            moves[current] = "RIGHT";
+        }
+        Debug.LogFormat("[Yellow Arrows #{0}] Press #{1} should be '{2}' according to row '{3}'!", moduleId, current+1, moves[current], letter);
         StopCoroutine("getMoves");
+        moduleSolved = false;
     }
 
     //twitch plays
@@ -456,6 +470,10 @@ public class YellowArrowsScript : MonoBehaviour {
         }
 
         yield return null;
-        yield return buttonsToPress;
+        foreach(KMSelectable km in buttonsToPress)
+        {
+            km.OnInteract();
+            yield return new WaitForSeconds(0.6f);
+        }
     }
 }
