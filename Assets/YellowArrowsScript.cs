@@ -22,6 +22,8 @@ public class YellowArrowsScript : MonoBehaviour {
     private int current;
     private int letindex;
 
+    private bool resetting = false;
+
     static int moduleIdCounter = 1;
     int moduleId;
     private bool moduleSolved;
@@ -46,7 +48,7 @@ public class YellowArrowsScript : MonoBehaviour {
 
     void PressButton(KMSelectable pressed)
     {
-        if(moduleSolved != true)
+        if(moduleSolved != true && resetting != true)
         {
             pressed.AddInteractionPunch(0.25f);
             audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
@@ -97,7 +99,6 @@ public class YellowArrowsScript : MonoBehaviour {
                 else
                 {
                     StartCoroutine(getMoves());
-                    moduleSolved = true;
                 }
             }
         }
@@ -140,6 +141,7 @@ public class YellowArrowsScript : MonoBehaviour {
 
     private IEnumerator getMoves()
     {
+        resetting = true;
         yield return null;
         yield return new WaitForSeconds(0.5f);
         string num = "" + bomb.GetSerialNumber().ElementAt(5);
@@ -432,7 +434,7 @@ public class YellowArrowsScript : MonoBehaviour {
         }
         Debug.LogFormat("[Yellow Arrows #{0}] Press #{1} should be '{2}' according to row '{3}'!", moduleId, current+1, moves[current], letter);
         StopCoroutine("getMoves");
-        moduleSolved = false;
+        resetting = false;
     }
 
     //twitch plays
