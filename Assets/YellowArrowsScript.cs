@@ -94,6 +94,7 @@ public class YellowArrowsScript : MonoBehaviour {
                 current++;
                 if (current == 5)
                 {
+                    moduleSolved = true;
                     StartCoroutine(victory());
                 }
                 else
@@ -136,7 +137,6 @@ public class YellowArrowsScript : MonoBehaviour {
         StopCoroutine("victory");
         Debug.LogFormat("[Yellow Arrows #{0}] All Presses were correct! Module Disarmed!", moduleId);
         GetComponent<KMBombModule>().HandlePass();
-        moduleSolved = true;
     }
 
     private IEnumerator getMoves()
@@ -477,5 +477,6 @@ public class YellowArrowsScript : MonoBehaviour {
             km.OnInteract();
             yield return new WaitForSeconds(0.6f);
         }
+        if (moduleSolved) { yield return "solve"; }
     }
 }
