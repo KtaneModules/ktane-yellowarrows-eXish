@@ -23,13 +23,13 @@ MonoBehaviour:
     PDF: https://ktane.timwi.de/PDF/Yellow%20Arrows.pdf
 
 
-    Yellow Arrows (yellowArrowsModule) v1.1.2
+    Yellow Arrows (yellowArrowsModule) v1.1.3
 
     Module and Idea by Kusane
 
     Mod Implemented by eXish
 
     Twitch Plays supported'
-  version: 1.1.2
+  version: 1.1.3
   outputFolder: build
   previewImage: {fileID: 2800000, guid: f611828cdde5546408a56548dfd4a6f3, type: 3}

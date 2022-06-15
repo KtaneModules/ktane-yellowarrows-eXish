@@ -10,9 +10,10 @@ public class YellowArrowsScript : MonoBehaviour {
 
     public KMAudio audio;
     public KMBombInfo bomb;
-
+    public KMColorblindMode colorblindMode;
     public KMSelectable[] buttons;
     public GameObject numDisplay;
+    public GameObject colorblindText;
 
     private string[] moves = new string[5];
     private string[] movesperf = new string[5];
@@ -23,6 +24,7 @@ public class YellowArrowsScript : MonoBehaviour {
     private int letindex;
 
     private bool activated = false;
+    private bool cbEnabled = false;
 
     static int moduleIdCounter = 1;
     int moduleId;
@@ -32,6 +34,7 @@ public class YellowArrowsScript : MonoBehaviour {
     {
         moduleId = moduleIdCounter++;
         moduleSolved = false;
+        cbEnabled = colorblindMode.ColorblindModeActive;
         foreach(KMSelectable obj in buttons){
             KMSelectable pressed = obj;
             pressed.OnInteract += delegate () { PressButton(pressed); return false; };
@@ -43,21 +46,23 @@ public class YellowArrowsScript : MonoBehaviour {
         current = 0;
         numDisplay.GetComponent<TextMesh>().text = " ";
         if (activated)
-            StartCoroutine(generateNewLet(true));
+            StartCoroutine(generateNewLet());
     }
 
     void OnActivate()
     {
-        StartCoroutine(generateNewLet(false));
+        StartCoroutine(generateNewLet());
+        if (cbEnabled)
+            colorblindText.SetActive(true);
         activated = true;
     }
 
     void PressButton(KMSelectable pressed)
     {
-        if(moduleSolved != true && activated == true && !numDisplay.GetComponent<TextMesh>().text.Equals(" "))
+        if(moduleSolved != true && !numDisplay.GetComponent<TextMesh>().text.Equals(" "))
         {
             pressed.AddInteractionPunch(0.25f);
-            audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
+            audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, pressed.transform);
             if(pressed == buttons[0] && !moves[current].Equals("UP") && !moves[current].Equals("ANY"))
             {
                 GetComponent<KMBombModule>().HandleStrike();
@@ -118,19 +123,16 @@ public class YellowArrowsScript : MonoBehaviour {
         }
     }
 
-    private IEnumerator generateNewLet(bool delay)
+    private IEnumerator generateNewLet()
     {
         yield return null;
-        int rando = UnityEngine.Random.RandomRange(0, 26);
-        if (delay)
-            yield return new WaitForSeconds(0.5f);
+        int rando = UnityEngine.Random.Range(0, 26);
+        yield return new WaitForSeconds(0.5f);
         numDisplay.GetComponent<TextMesh>().text = "" + letters[rando];
-        StopCoroutine("generateNewLet");
         Debug.LogFormat("[Yellow Arrows #{0}] The Starting row is '{1}'!", moduleId, letters[rando]);
         letindex = rando;
         letter = letters[letindex];
         getMoves();
-        activated = true;
     }
 
     private IEnumerator victory()
@@ -138,7 +140,7 @@ public class YellowArrowsScript : MonoBehaviour {
         yield return null;
         for(int i = 0; i < 100; i++)
         {
-            int rand1 = UnityEngine.Random.RandomRange(0, 10);
+            int rand1 = UnityEngine.Random.Range(0, 10);
             if (i < 50)
             {
                 numDisplay.GetComponent<TextMesh>().text = rand1 + "";
@@ -150,7 +152,6 @@ public class YellowArrowsScript : MonoBehaviour {
             yield return new WaitForSeconds(0.025f);
         }
         numDisplay.GetComponent<TextMesh>().text = "GG";
-        StopCoroutine("victory");
         Debug.LogFormat("[Yellow Arrows #{0}] All Presses were correct! Module Disarmed!", moduleId);
         GetComponent<KMBombModule>().HandlePass();
     }
@@ -455,12 +456,6 @@ public class YellowArrowsScript : MonoBehaviour {
 
     IEnumerator ProcessTwitchCommand(string command)
     {
-        if (!activated)
-        {
-            yield return null;
-            yield return "sendtochaterror I have not fully activated yet!";
-            yield break;
-        }
         if (Regex.IsMatch(command, @"^\s*reset\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
             yield return null;
@@ -489,17 +484,13 @@ public class YellowArrowsScript : MonoBehaviour {
         }
 
         yield return null;
-        foreach(KMSelectable km in buttonsToPress)
-        {
-            km.OnInteract();
-            yield return new WaitForSeconds(0.1f);
-        }
+        yield return buttonsToPress;
         if (moduleSolved) { yield return "solve"; }
     }
 
     IEnumerator TwitchHandleForcedSolve()
     {
-        while (!activated) { yield return true; yield return new WaitForSeconds(0.1f); }
+        while (numDisplay.GetComponent<TextMesh>().text.Equals(" ")) { yield return true; }
         if (!moduleSolved)
         {
             int start = current;
@@ -523,12 +514,12 @@ public class YellowArrowsScript : MonoBehaviour {
                 }
                 else if (moves[current].Equals("ANY"))
                 {
-                    int rando = UnityEngine.Random.RandomRange(0, 4);
+                    int rando = UnityEngine.Random.Range(0, 4);
                     buttons[rando].OnInteract();
                 }
                 yield return new WaitForSeconds(0.1f);
             }
         }
-        while (!numDisplay.GetComponent<TextMesh>().text.Equals("GG")) { yield return true; yield return new WaitForSeconds(0.1f); }
+        while (!numDisplay.GetComponent<TextMesh>().text.Equals("GG")) { yield return true; }
     }
 }
