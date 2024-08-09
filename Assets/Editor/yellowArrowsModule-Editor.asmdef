@@ -1,0 +1,10 @@
+{
+  "name": "yellowArrowsModule-Editor",
+  "references": [
+    "yellowArrowsModule"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": []
+}

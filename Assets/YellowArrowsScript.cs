@@ -74,120 +74,132 @@ public class YellowArrowsScript : MonoBehaviour
         (dirs, module) => ArrowDirection.Right
     );
 
-    private static readonly Func<YellowArrowsScript, MonoRandom, Func<List<ArrowDirection>, ArrowDirection>>[] _ruleSeededRules = NewArray(
-        (module, rnd) => dirs => ArrowDirection.Up,
-        (module, rnd) => dirs => ArrowDirection.Right,
-        (module, rnd) => dirs => ArrowDirection.Down,
-        (module, rnd) => dirs => ArrowDirection.Left,
-        (module, rnd) => dirs => ArrowDirection.Any,
-        ParametrizedRule((dirs, module) => dirs.Contains(ArrowDirection.Up)),
-        ParametrizedRule((dirs, module) => dirs.Contains(ArrowDirection.Right)),
-        ParametrizedRule((dirs, module) => dirs.Contains(ArrowDirection.Down)),
-        ParametrizedRule((dirs, module) => dirs.Contains(ArrowDirection.Left)),
-        ParametrizedRule(rnd => (ArrowDirection) rnd.Next(0, 4), (dirs, module, dir) => dirs.Count > 0 && dirs.Last() == dir),
-        ParametrizedRule(rnd => (ArrowDirection) rnd.Next(0, 4), (dirs, module, dir) => dirs.Count > 0 && dirs.Last() != dir),
-        ParametrizedRule(rnd => (ArrowDirection) rnd.Next(0, 4), (dirs, module, dir) => dirs.Count == 0),
-        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryCount() % 2 == 0),
-        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryCount() == 0),
-        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryCount() == 1),
-        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryCount() == 2),
-        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryCount() == 3),
-        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryCount() <= 3),
-        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryCount() >= 4),
-        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryHolderCount() % 2 == 0),
-        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryHolderCount() == 0),
-        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryHolderCount() == 1),
-        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryHolderCount() == 2),
-        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryHolderCount() == 3),
-        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryHolderCount() <= 3),
-        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryHolderCount() >= 4),
-        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Count() % 2 == 0),
-        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("SND")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("CLR")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("CAR")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("IND")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("FRQ")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("SIG")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("NSA")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("MSA")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("TRN")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("BOB")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("FRK")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Count() % 2 == 0),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("SND")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("CLR")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("CAR")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("IND")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("FRQ")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("SIG")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("NSA")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("MSA")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("TRN")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("BOB")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("FRK")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Count() % 2 == 0),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("SND")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("CLR")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("CAR")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("IND")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("FRQ")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("SIG")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("NSA")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("MSA")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("TRN")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("BOB")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("FRK")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPortCount() % 2 == 0),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPorts().Contains("Parallel")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPorts().Contains("Serial")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPorts().Contains("PS2")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPorts().Contains("DVI")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPorts().Contains("StereoRCA")),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPorts().Contains("RJ45")),
-        ParametrizedRule((dirs, module) => module.Bomb.IsDuplicatePortPresent()),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPortCount() == 0),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPortCount() == 1),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPortCount() == 2),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPortCount() == 3),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPortCount() <= 3),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPortCount() >= 4),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPortPlateCount() % 2 == 0),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPortPlateCount() == 0),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPortPlateCount() == 1),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPortPlateCount() == 2),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPortPlateCount() == 3),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPortPlateCount() <= 3),
-        ParametrizedRule((dirs, module) => module.Bomb.GetPortPlateCount() >= 4),
-        ParametrizedRule((dirs, module) => module.Bomb.GetSerialNumberLetters().Count() == 2),
-        ParametrizedRule((dirs, module) => module.Bomb.GetSerialNumberLetters().Count() == 3),
-        ParametrizedRule((dirs, module) => module.Bomb.GetSerialNumberLetters().Count() == 4),
-        ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[rnd.Next(0, 36)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[0] == ch),
-        ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[rnd.Next(0, 36)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[1] == ch),
-        ParametrizedRule(rnd => "0123456789"[rnd.Next(0, 10)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[2] == ch),
-        ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[rnd.Next(0, 26)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[3] == ch),
-        ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[rnd.Next(0, 26)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[4] == ch),
-        ParametrizedRule(rnd => "0123456789"[rnd.Next(0, 10)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[5] == ch),
-        ParametrizedRule((dirs, module) => module.Bomb.GetModuleNames().Count == module.Bomb.GetSolvableModuleNames().Count)
+    private struct RuleInfo
+    {
+        public string Name;
+        public Func<List<ArrowDirection>, ArrowDirection> Rule;
+
+        public RuleInfo(string name, Func<List<ArrowDirection>, ArrowDirection> rule)
+        {
+            Name = name;
+            Rule = rule;
+        }
+    }
+
+    private static readonly Func<YellowArrowsScript, MonoRandom, RuleInfo>[] _ruleSeededRules = NewArray<Func<YellowArrowsScript, MonoRandom, RuleInfo>>(
+        (module, rnd) => new RuleInfo("Up", dirs => ArrowDirection.Up),
+        (module, rnd) => new RuleInfo("Right", dirs => ArrowDirection.Right),
+        (module, rnd) => new RuleInfo("Down", dirs => ArrowDirection.Down),
+        (module, rnd) => new RuleInfo("Left", dirs => ArrowDirection.Left),
+        (module, rnd) => new RuleInfo("Any", dirs => ArrowDirection.Any),
+        ParametrizedRule("Up hasn’t been pressed yet", (dirs, module) => !dirs.Contains(ArrowDirection.Up)),
+        ParametrizedRule("Right hasn’t been pressed yet", (dirs, module) => !dirs.Contains(ArrowDirection.Right)),
+        ParametrizedRule("Down hasn’t been pressed yet", (dirs, module) => !dirs.Contains(ArrowDirection.Down)),
+        ParametrizedRule("Left hasn’t been pressed yet", (dirs, module) => !dirs.Contains(ArrowDirection.Left)),
+        ParametrizedRule(rnd => (ArrowDirection) rnd.Next(0, 4), prev => $"Previous input was {prev}", (dirs, module, dir) => dirs.Count > 0 && dirs.Last() == dir),
+        ParametrizedRule(rnd => (ArrowDirection) rnd.Next(0, 4), prev => $"Previous input was not {prev}", (dirs, module, dir) => dirs.Count > 0 && dirs.Last() != dir),
+        ParametrizedRule("This is the Starting Row", (dirs, module) => false),
+        ParametrizedRule("Number of batteries is even", (dirs, module) => module.Bomb.GetBatteryCount() % 2 == 0),
+        ParametrizedRule("No batteries on bomb", (dirs, module) => module.Bomb.GetBatteryCount() == 0),
+        ParametrizedRule("Exactly 1 battery on bomb", (dirs, module) => module.Bomb.GetBatteryCount() == 1),
+        ParametrizedRule("Exactly 2 batteries on bomb", (dirs, module) => module.Bomb.GetBatteryCount() == 2),
+        ParametrizedRule("Exactly 3 batteries on bomb", (dirs, module) => module.Bomb.GetBatteryCount() == 3),
+        ParametrizedRule("At most 3 batteries on bomb", (dirs, module) => module.Bomb.GetBatteryCount() <= 3),
+        ParametrizedRule("At least 4 batteries on bomb", (dirs, module) => module.Bomb.GetBatteryCount() >= 4),
+        ParametrizedRule("Number of batteries is even", (dirs, module) => module.Bomb.GetBatteryHolderCount() % 2 == 0),
+        ParametrizedRule("No battery holders on bomb", (dirs, module) => module.Bomb.GetBatteryHolderCount() == 0),
+        ParametrizedRule("Exactly 1 battery holder on bomb", (dirs, module) => module.Bomb.GetBatteryHolderCount() == 1),
+        ParametrizedRule("Exactly 2 battery holders on bomb", (dirs, module) => module.Bomb.GetBatteryHolderCount() == 2),
+        ParametrizedRule("Exactly 3 battery holders on bomb", (dirs, module) => module.Bomb.GetBatteryHolderCount() == 3),
+        ParametrizedRule("At most 3 battery holders on bomb", (dirs, module) => module.Bomb.GetBatteryHolderCount() <= 3),
+        ParametrizedRule("At least 4 battery holders on bomb", (dirs, module) => module.Bomb.GetBatteryHolderCount() >= 4),
+        ParametrizedRule("Number of indicators is even", (dirs, module) => module.Bomb.GetIndicators().Count() % 2 == 0),
+        ParametrizedRule("SND indicator present", (dirs, module) => module.Bomb.GetIndicators().Contains("SND")),
+        ParametrizedRule("CLR indicator present", (dirs, module) => module.Bomb.GetIndicators().Contains("CLR")),
+        ParametrizedRule("CAR indicator present", (dirs, module) => module.Bomb.GetIndicators().Contains("CAR")),
+        ParametrizedRule("IND indicator present", (dirs, module) => module.Bomb.GetIndicators().Contains("IND")),
+        ParametrizedRule("FRQ indicator present", (dirs, module) => module.Bomb.GetIndicators().Contains("FRQ")),
+        ParametrizedRule("SIG indicator present", (dirs, module) => module.Bomb.GetIndicators().Contains("SIG")),
+        ParametrizedRule("NSA indicator present", (dirs, module) => module.Bomb.GetIndicators().Contains("NSA")),
+        ParametrizedRule("MSA indicator present", (dirs, module) => module.Bomb.GetIndicators().Contains("MSA")),
+        ParametrizedRule("TRN indicator present", (dirs, module) => module.Bomb.GetIndicators().Contains("TRN")),
+        ParametrizedRule("BOB indicator present", (dirs, module) => module.Bomb.GetIndicators().Contains("BOB")),
+        ParametrizedRule("FRK indicator present", (dirs, module) => module.Bomb.GetIndicators().Contains("FRK")),
+        ParametrizedRule("Number of lit indicators is even", (dirs, module) => module.Bomb.GetOnIndicators().Count() % 2 == 0),
+        ParametrizedRule("Lit SND indicator present", (dirs, module) => module.Bomb.GetOnIndicators().Contains("SND")),
+        ParametrizedRule("Lit CLR indicator present", (dirs, module) => module.Bomb.GetOnIndicators().Contains("CLR")),
+        ParametrizedRule("Lit CAR indicator present", (dirs, module) => module.Bomb.GetOnIndicators().Contains("CAR")),
+        ParametrizedRule("Lit IND indicator present", (dirs, module) => module.Bomb.GetOnIndicators().Contains("IND")),
+        ParametrizedRule("Lit FRQ indicator present", (dirs, module) => module.Bomb.GetOnIndicators().Contains("FRQ")),
+        ParametrizedRule("Lit SIG indicator present", (dirs, module) => module.Bomb.GetOnIndicators().Contains("SIG")),
+        ParametrizedRule("Lit NSA indicator present", (dirs, module) => module.Bomb.GetOnIndicators().Contains("NSA")),
+        ParametrizedRule("Lit MSA indicator present", (dirs, module) => module.Bomb.GetOnIndicators().Contains("MSA")),
+        ParametrizedRule("Lit TRN indicator present", (dirs, module) => module.Bomb.GetOnIndicators().Contains("TRN")),
+        ParametrizedRule("Lit BOB indicator present", (dirs, module) => module.Bomb.GetOnIndicators().Contains("BOB")),
+        ParametrizedRule("Lit FRK indicator present", (dirs, module) => module.Bomb.GetOnIndicators().Contains("FRK")),
+        ParametrizedRule("Number of unlit indicators is even", (dirs, module) => module.Bomb.GetOffIndicators().Count() % 2 == 0),
+        ParametrizedRule("Unlit SND indicator present", (dirs, module) => module.Bomb.GetOffIndicators().Contains("SND")),
+        ParametrizedRule("Unlit CLR indicator present", (dirs, module) => module.Bomb.GetOffIndicators().Contains("CLR")),
+        ParametrizedRule("Unlit CAR indicator present", (dirs, module) => module.Bomb.GetOffIndicators().Contains("CAR")),
+        ParametrizedRule("Unlit IND indicator present", (dirs, module) => module.Bomb.GetOffIndicators().Contains("IND")),
+        ParametrizedRule("Unlit FRQ indicator present", (dirs, module) => module.Bomb.GetOffIndicators().Contains("FRQ")),
+        ParametrizedRule("Unlit SIG indicator present", (dirs, module) => module.Bomb.GetOffIndicators().Contains("SIG")),
+        ParametrizedRule("Unlit NSA indicator present", (dirs, module) => module.Bomb.GetOffIndicators().Contains("NSA")),
+        ParametrizedRule("Unlit MSA indicator present", (dirs, module) => module.Bomb.GetOffIndicators().Contains("MSA")),
+        ParametrizedRule("Unlit TRN indicator present", (dirs, module) => module.Bomb.GetOffIndicators().Contains("TRN")),
+        ParametrizedRule("Unlit BOB indicator present", (dirs, module) => module.Bomb.GetOffIndicators().Contains("BOB")),
+        ParametrizedRule("Unlit FRK indicator present", (dirs, module) => module.Bomb.GetOffIndicators().Contains("FRK")),
+        ParametrizedRule("Number of ports is even", (dirs, module) => module.Bomb.GetPortCount() % 2 == 0),
+        ParametrizedRule("Parallel port on bomb", (dirs, module) => module.Bomb.GetPorts().Contains("Parallel")),
+        ParametrizedRule("Serial port on bomb", (dirs, module) => module.Bomb.GetPorts().Contains("Serial")),
+        ParametrizedRule("PS/2 port on bomb", (dirs, module) => module.Bomb.GetPorts().Contains("PS2")),
+        ParametrizedRule("DVI-D port on bomb", (dirs, module) => module.Bomb.GetPorts().Contains("DVI")),
+        ParametrizedRule("Stereo RCA port on bomb", (dirs, module) => module.Bomb.GetPorts().Contains("StereoRCA")),
+        ParametrizedRule("RJ-45 port on bomb", (dirs, module) => module.Bomb.GetPorts().Contains("RJ45")),
+        ParametrizedRule("Duplicate port on bomb", (dirs, module) => module.Bomb.IsDuplicatePortPresent()),
+        ParametrizedRule("No ports on bomb", (dirs, module) => module.Bomb.GetPortCount() == 0),
+        ParametrizedRule("Exactly 1 port on bomb", (dirs, module) => module.Bomb.GetPortCount() == 1),
+        ParametrizedRule("Exactly 2 ports on bomb", (dirs, module) => module.Bomb.GetPortCount() == 2),
+        ParametrizedRule("Exactly 3 ports on bomb", (dirs, module) => module.Bomb.GetPortCount() == 3),
+        ParametrizedRule("At most 3 ports on bomb", (dirs, module) => module.Bomb.GetPortCount() <= 3),
+        ParametrizedRule("At least 4 ports on bomb", (dirs, module) => module.Bomb.GetPortCount() >= 4),
+        ParametrizedRule("Number of port plates is even", (dirs, module) => module.Bomb.GetPortPlateCount() % 2 == 0),
+        ParametrizedRule("No port plates on bomb", (dirs, module) => module.Bomb.GetPortPlateCount() == 0),
+        ParametrizedRule("Exactly 1 port plate on bomb", (dirs, module) => module.Bomb.GetPortPlateCount() == 1),
+        ParametrizedRule("Exactly 2 port plates on bomb", (dirs, module) => module.Bomb.GetPortPlateCount() == 2),
+        ParametrizedRule("Exactly 3 port plates on bomb", (dirs, module) => module.Bomb.GetPortPlateCount() == 3),
+        ParametrizedRule("At most 3 port plates on bomb", (dirs, module) => module.Bomb.GetPortPlateCount() <= 3),
+        ParametrizedRule("At least 4 port plates on bomb", (dirs, module) => module.Bomb.GetPortPlateCount() >= 4),
+        ParametrizedRule("Serial number has 2 letters", (dirs, module) => module.Bomb.GetSerialNumberLetters().Count() == 2),
+        ParametrizedRule("Serial number has 3 letters", (dirs, module) => module.Bomb.GetSerialNumberLetters().Count() == 3),
+        ParametrizedRule("Serial number has 4 letters", (dirs, module) => module.Bomb.GetSerialNumberLetters().Count() == 4),
+        ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[rnd.Next(0, 36)], prev => $"First serial number character is {prev}", (dirs, module, ch) => module.Bomb.GetSerialNumber()[0] == ch),
+        ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[rnd.Next(0, 36)], prev => $"Second serial number character is {prev}", (dirs, module, ch) => module.Bomb.GetSerialNumber()[1] == ch),
+        ParametrizedRule(rnd => "0123456789"[rnd.Next(0, 10)], prev => $"Third serial number character is {prev}", (dirs, module, ch) => module.Bomb.GetSerialNumber()[2] == ch),
+        ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[rnd.Next(0, 26)], prev => $"Fourth serial number character is {prev}", (dirs, module, ch) => module.Bomb.GetSerialNumber()[3] == ch),
+        ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[rnd.Next(0, 26)], prev => $"Fifth serial number character is {prev}", (dirs, module, ch) => module.Bomb.GetSerialNumber()[4] == ch),
+        ParametrizedRule(rnd => "0123456789"[rnd.Next(0, 10)], prev => $"The serial number ends with a {prev}", (dirs, module, ch) => module.Bomb.GetSerialNumber()[5] == ch),
+        ParametrizedRule("No Needy present", (dirs, module) => module.Bomb.GetModuleNames().Count == module.Bomb.GetSolvableModuleNames().Count)
     );
 
-    private static Func<YellowArrowsScript, MonoRandom, Func<List<ArrowDirection>, ArrowDirection>> ParametrizedRule(
-        Func<List<ArrowDirection>, YellowArrowsScript, bool> rule)
+    private static Func<YellowArrowsScript, MonoRandom, RuleInfo> ParametrizedRule(
+        string ruleName, Func<List<ArrowDirection>, YellowArrowsScript, bool> rule)
     {
         return (module, rnd) =>
         {
             var rands = GenerateDirections(rnd);
-            return dirs => rule(dirs, module) ? rands[0] : rands[1];
+            return new RuleInfo($"{ruleName} ? {rands[0]} : {rands[1]}", dirs => rule(dirs, module) ? rands[0] : rands[1]);
         };
     }
 
-    private static Func<YellowArrowsScript, MonoRandom, Func<List<ArrowDirection>, ArrowDirection>> ParametrizedRule<T>(
-        Func<MonoRandom, T> getRnd, Func<List<ArrowDirection>, YellowArrowsScript, T, bool> rule)
+    private static Func<YellowArrowsScript, MonoRandom, RuleInfo> ParametrizedRule<T>(
+        Func<MonoRandom, T> getRnd, Func<T, string> ruleName, Func<List<ArrowDirection>, YellowArrowsScript, T, bool> rule)
     {
         return (module, rnd) =>
         {
             var rands = GenerateDirections(rnd);
             var randPrev = getRnd(rnd);
-            return dirs => rule(dirs, module, randPrev) ? rands[0] : rands[1];
+            return new RuleInfo($"{ruleName(randPrev)} ? {rands[0]} : {rands[1]}", dirs => rule(dirs, module, randPrev) ? rands[0] : rands[1]);
         };
     }
 
@@ -212,10 +224,16 @@ public class YellowArrowsScript : MonoBehaviour
         var rnd = RuleSeedable.GetRNG();
         if (rnd.Seed != 1)
             Debug.LogFormat("[Yellow Arrows #{0}] Using rule seed {1}.", moduleId, rnd.Seed);
-        _rules = rnd.Seed == 1 ?
-            _seed1rules.Select(rule => new Func<List<ArrowDirection>, ArrowDirection>(n => rule(n, this))).ToArray() :
-            rnd.ShuffleFisherYates(_ruleSeededRules).Select(rule => rule(this, rnd)).ToArray();
+        _rules = rnd.Seed == 1 ? _seed1rules.Select(rule => new Func<List<ArrowDirection>, ArrowDirection>(n => rule(n, this))).ToArray() : GenerateRuleSeed(rnd);
         Generate();
+    }
+
+    private Func<List<ArrowDirection>, ArrowDirection>[] GenerateRuleSeed(MonoRandom rnd)
+    {
+        var rulesRaw = rnd.ShuffleFisherYates(_ruleSeededRules).Select(r => r(this, rnd)).ToArray();
+        var rulesStrings = rulesRaw.Take(26).Select((r, ix) => $"<Yellow Arrows #{moduleId}> {(char) ('A' + ix)} = {r.Name}").ToArray();
+        Debug.Log($"<Yellow Arrows #{moduleId}> Rules:\n{rulesStrings.Join("\n")}");
+        return rulesRaw.Select(r => r.Rule).ToArray();
     }
 
     private void Generate()
