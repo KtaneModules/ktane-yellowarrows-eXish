@@ -9,10 +9,10 @@ using Rnd = UnityEngine.Random;
 using UnityEngine.Timeline;
 using System.Linq.Expressions;
 using UnityEditor.Callbacks;
+using System.ComponentModel;
 
 public class YellowArrowsScript : MonoBehaviour
 {
-
     public KMAudio Audio;
     public KMBombInfo Bomb;
     public KMBombModule Module;
@@ -74,31 +74,126 @@ public class YellowArrowsScript : MonoBehaviour
         (dirs, module) => ArrowDirection.Right
     );
 
-    private static readonly Func<YellowArrowsScript, MonoRandom, Func<List<ArrowDirection>, ArrowDirection>>[] _ruleSeededRules = NewArray<Func<YellowArrowsScript, MonoRandom, Func<List<ArrowDirection>, ArrowDirection>>>(
-        (module, rnd) =>
-        {
-            return dirs => (ArrowDirection)rnd.Next(0, 5);
-        },
-        (module, rnd) =>
-        {
-            var rands = GenerateDirections(rnd);
-            var randPrev = (ArrowDirection)rnd.Next(0, 4);
-            return dirs => dirs.Count > 0 && dirs.Last() == randPrev ? rands[0] : rands[1];
-        },
-        (module, rnd) =>
-        {
-            var rands = GenerateDirections(rnd);
-            return dirs => dirs.Count == 0 ? rands[0] : rands[1];
-        },
-        (module, rnd) =>
-        {
-            return dirs => ArrowDirection.Up;
-        }
+    private static readonly Func<YellowArrowsScript, MonoRandom, Func<List<ArrowDirection>, ArrowDirection>>[] _ruleSeededRules = NewArray(
+        (module, rnd) => dirs => ArrowDirection.Up,
+        (module, rnd) => dirs => ArrowDirection.Right,
+        (module, rnd) => dirs => ArrowDirection.Down,
+        (module, rnd) => dirs => ArrowDirection.Left,
+        (module, rnd) => dirs => ArrowDirection.Any,
+        ParametrizedRule((dirs, module) => dirs.Contains(ArrowDirection.Up)),
+        ParametrizedRule((dirs, module) => dirs.Contains(ArrowDirection.Right)),
+        ParametrizedRule((dirs, module) => dirs.Contains(ArrowDirection.Down)),
+        ParametrizedRule((dirs, module) => dirs.Contains(ArrowDirection.Left)),
+        ParametrizedRule(rnd => (ArrowDirection) rnd.Next(0, 4), (dirs, module, dir) => dirs.Count > 0 && dirs.Last() == dir),
+        ParametrizedRule(rnd => (ArrowDirection) rnd.Next(0, 4), (dirs, module, dir) => dirs.Count > 0 && dirs.Last() != dir),
+        ParametrizedRule(rnd => (ArrowDirection) rnd.Next(0, 4), (dirs, module, dir) => dirs.Count == 0),
+        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryCount() % 2 == 0),
+        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryCount() == 0),
+        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryCount() == 1),
+        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryCount() == 2),
+        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryCount() == 3),
+        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryCount() <= 3),
+        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryCount() >= 4),
+        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryHolderCount() % 2 == 0),
+        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryHolderCount() == 0),
+        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryHolderCount() == 1),
+        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryHolderCount() == 2),
+        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryHolderCount() == 3),
+        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryHolderCount() <= 3),
+        ParametrizedRule((dirs, module) => module.Bomb.GetBatteryHolderCount() >= 4),
+        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Count() % 2 == 0),
+        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("SND")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("CLR")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("CAR")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("IND")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("FRQ")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("SIG")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("NSA")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("MSA")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("TRN")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("BOB")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetIndicators().Contains("FRK")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Count() % 2 == 0),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("SND")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("CLR")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("CAR")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("IND")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("FRQ")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("SIG")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("NSA")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("MSA")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("TRN")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("BOB")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOnIndicators().Contains("FRK")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Count() % 2 == 0),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("SND")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("CLR")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("CAR")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("IND")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("FRQ")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("SIG")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("NSA")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("MSA")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("TRN")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("BOB")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetOffIndicators().Contains("FRK")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPortCount() % 2 == 0),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPorts().Contains("Parallel")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPorts().Contains("Serial")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPorts().Contains("PS2")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPorts().Contains("DVI")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPorts().Contains("StereoRCA")),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPorts().Contains("RJ45")),
+        ParametrizedRule((dirs, module) => module.Bomb.IsDuplicatePortPresent()),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPortCount() == 0),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPortCount() == 1),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPortCount() == 2),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPortCount() == 3),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPortCount() <= 3),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPortCount() >= 4),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPortPlateCount() % 2 == 0),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPortPlateCount() == 0),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPortPlateCount() == 1),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPortPlateCount() == 2),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPortPlateCount() == 3),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPortPlateCount() <= 3),
+        ParametrizedRule((dirs, module) => module.Bomb.GetPortPlateCount() >= 4),
+        ParametrizedRule((dirs, module) => module.Bomb.GetSerialNumberLetters().Count() == 2),
+        ParametrizedRule((dirs, module) => module.Bomb.GetSerialNumberLetters().Count() == 3),
+        ParametrizedRule((dirs, module) => module.Bomb.GetSerialNumberLetters().Count() == 4),
+        ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[rnd.Next(0, 36)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[0] == ch),
+        ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[rnd.Next(0, 36)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[1] == ch),
+        ParametrizedRule(rnd => "0123456789"[rnd.Next(0, 36)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[2] == ch),
+        ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[rnd.Next(0, 36)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[3] == ch),
+        ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[rnd.Next(0, 36)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[4] == ch),
+        ParametrizedRule(rnd => "0123456789"[rnd.Next(0, 36)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[5] == ch),
+        ParametrizedRule((dirs, module) => module.Bomb.GetModuleNames().Count == module.Bomb.GetSolvableModuleNames().Count)
     );
+
+    private static Func<YellowArrowsScript, MonoRandom, Func<List<ArrowDirection>, ArrowDirection>> ParametrizedRule(
+        Func<List<ArrowDirection>, YellowArrowsScript, bool> rule)
+    {
+        return (module, rnd) =>
+        {
+            var rands = GenerateDirections(rnd);
+            return dirs => rule(dirs, module) ? rands[0] : rands[1];
+        };
+    }
+
+    private static Func<YellowArrowsScript, MonoRandom, Func<List<ArrowDirection>, ArrowDirection>> ParametrizedRule<T>(
+        Func<MonoRandom, T> getRnd, Func<List<ArrowDirection>, YellowArrowsScript, T, bool> rule)
+    {
+        return (module, rnd) =>
+        {
+            var rands = GenerateDirections(rnd);
+            var randPrev = getRnd(rnd);
+            return dirs => rule(dirs, module, randPrev) ? rands[0] : rands[1];
+        };
+    }
 
     private static ArrowDirection[] GenerateDirections(MonoRandom rnd)
     {
-        return rnd.ShuffleFisherYates((ArrowDirection[])Enum.GetValues(typeof(ArrowDirection)));
+        return rnd.ShuffleFisherYates((ArrowDirection[]) Enum.GetValues(typeof(ArrowDirection)));
     }
 
     private static T[] NewArray<T>(params T[] array) { return array; }
@@ -119,7 +214,7 @@ public class YellowArrowsScript : MonoBehaviour
             Debug.LogFormat("[Yellow Arrows #{0}] Using rule seed {1}.", moduleId, rnd.Seed);
         _rules = rnd.Seed == 1 ?
             _seed1rules.Select(rule => new Func<List<ArrowDirection>, ArrowDirection>(n => rule(n, this))).ToArray() :
-            _seed1rules.Select(rule => new Func<List<ArrowDirection>, ArrowDirection>(n => rule(n, this))).ToArray();
+            rnd.ShuffleFisherYates(_ruleSeededRules).Select(rule => rule(this, rnd)).ToArray();
         Generate();
     }
 
@@ -160,9 +255,9 @@ public class YellowArrowsScript : MonoBehaviour
         {
             if (moduleSolved || !_canInteract)
                 return false;
-            if (_solutionDirs[_inputIx] == ArrowDirection.Any || _solutionDirs[_inputIx] == (ArrowDirection)btn)
+            if (_solutionDirs[_inputIx] == ArrowDirection.Any || _solutionDirs[_inputIx] == (ArrowDirection) btn)
             {
-                Debug.LogFormat("[Yellow Arrows #{0}] {1} was correctly pressed.", moduleId, (ArrowDirection)btn);
+                Debug.LogFormat("[Yellow Arrows #{0}] {1} was correctly pressed.", moduleId, (ArrowDirection) btn);
                 _inputIx++;
                 if (_inputIx == 7)
                 {
@@ -172,7 +267,7 @@ public class YellowArrowsScript : MonoBehaviour
             }
             else
             {
-                Debug.LogFormat("[Yellow Arrows #{0}] {1} was pressed, when {2} was expected. Strike.", moduleId, _solutionDirs[_inputIx], (ArrowDirection)btn);
+                Debug.LogFormat("[Yellow Arrows #{0}] {1} was pressed, when {2} was expected. Strike.", moduleId, _solutionDirs[_inputIx], (ArrowDirection) btn);
                 _canInteract = false;
                 Generate();
                 StartCoroutine(Delay());
@@ -245,7 +340,7 @@ public class YellowArrowsScript : MonoBehaviour
     {
         while (_inputIx != 7)
         {
-            ButtonSels[(int)_solutionDirs[_inputIx] % 4].OnInteract(); // Modulo 4, otherwise "Any" causes an IndexOutOfRange exception.
+            ButtonSels[(int) _solutionDirs[_inputIx] % 4].OnInteract(); // Modulo 4, otherwise "Any" causes an IndexOutOfRange exception.
             yield return new WaitForSeconds(0.1f);
         }
         while (!moduleSolved)
