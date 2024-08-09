@@ -49,7 +49,7 @@ public class YellowArrowsScript : MonoBehaviour
         (dirs, module) => ArrowDirection.Up,
         (dirs, module) => dirs.Count > 0 && dirs.Last() == ArrowDirection.Left ? ArrowDirection.Down : ArrowDirection.Right,
         (dirs, module) => module.Bomb.GetSerialNumber()[5] == '3' ? ArrowDirection.Left : ArrowDirection.Up,
-        (dirs, module) => dirs.Count == 0 ? ArrowDirection.Up : ArrowDirection.Down,
+        (dirs, module) => ArrowDirection.Down,
         (dirs, module) => module.Bomb.GetOnIndicators().Contains("SIG") ? ArrowDirection.Right : ArrowDirection.Left,
         (dirs, module) => !module.Bomb.IsPortPresent("PS2") ? ArrowDirection.Down : ArrowDirection.Any,
         (dirs, module) => !dirs.Contains(ArrowDirection.Down) ? ArrowDirection.Up : ArrowDirection.Down,
@@ -59,7 +59,7 @@ public class YellowArrowsScript : MonoBehaviour
         (dirs, module) => ArrowDirection.Down,
         (dirs, module) => module.Bomb.GetBatteryCount() == 0 ? ArrowDirection.Up : ArrowDirection.Down,
         (dirs, module) => module.Bomb.GetBatteryHolderCount() < 3 ? ArrowDirection.Right : ArrowDirection.Left,
-        (dirs, module) => dirs.Count == 0 ? ArrowDirection.Any : ArrowDirection.Right,
+        (dirs, module) => ArrowDirection.Right,
         (dirs, module) => module.Bomb.GetSerialNumber().Any(i => i == 'O') ? ArrowDirection.Left : ArrowDirection.Down,
         (dirs, module) => module.Bomb.GetSerialNumberLetters().Count() == 4 ? ArrowDirection.Down : ArrowDirection.Up,
         (dirs, module) => dirs.Count > 0 && dirs.Last() == ArrowDirection.Right ? ArrowDirection.Down : ArrowDirection.Left,
@@ -69,7 +69,7 @@ public class YellowArrowsScript : MonoBehaviour
         (dirs, module) => ArrowDirection.Any,
         (dirs, module) => dirs.Count > 0 && dirs.Last() == ArrowDirection.Up ? ArrowDirection.Up : ArrowDirection.Down,
         (dirs, module) => module.Bomb.GetPortPlateCount() == 0 ? ArrowDirection.Right : ArrowDirection.Any,
-        (dirs, module) => dirs.Count == 0 ? ArrowDirection.Up : ArrowDirection.Left,
+        (dirs, module) => ArrowDirection.Left,
         (dirs, module) => !dirs.Contains(ArrowDirection.Up) ? ArrowDirection.Any : ArrowDirection.Up,
         (dirs, module) => ArrowDirection.Right
     );
