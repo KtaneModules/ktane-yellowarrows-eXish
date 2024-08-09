@@ -163,10 +163,10 @@ public class YellowArrowsScript : MonoBehaviour
         ParametrizedRule((dirs, module) => module.Bomb.GetSerialNumberLetters().Count() == 4),
         ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[rnd.Next(0, 36)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[0] == ch),
         ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[rnd.Next(0, 36)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[1] == ch),
-        ParametrizedRule(rnd => "0123456789"[rnd.Next(0, 36)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[2] == ch),
-        ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[rnd.Next(0, 36)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[3] == ch),
-        ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[rnd.Next(0, 36)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[4] == ch),
-        ParametrizedRule(rnd => "0123456789"[rnd.Next(0, 36)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[5] == ch),
+        ParametrizedRule(rnd => "0123456789"[rnd.Next(0, 10)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[2] == ch),
+        ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[rnd.Next(0, 26)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[3] == ch),
+        ParametrizedRule(rnd => "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[rnd.Next(0, 26)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[4] == ch),
+        ParametrizedRule(rnd => "0123456789"[rnd.Next(0, 10)], (dirs, module, ch) => module.Bomb.GetSerialNumber()[5] == ch),
         ParametrizedRule((dirs, module) => module.Bomb.GetModuleNames().Count == module.Bomb.GetSolvableModuleNames().Count)
     );
 
