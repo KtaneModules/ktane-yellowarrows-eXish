@@ -240,7 +240,7 @@ public class YellowArrowsScript : MonoBehaviour
         _offset = Bomb.GetSerialNumber()[5] - '0' + 1;
         int ix = _displayedLetterIx;
         _solutionDirs = new List<ArrowDirection>();
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < 5; i++)
         {
             ix = (ix + _offset) % 26;
             _solutionDirs.Add(_rules[ix](_solutionDirs));
@@ -273,7 +273,7 @@ public class YellowArrowsScript : MonoBehaviour
             {
                 Debug.LogFormat("[Yellow Arrows #{0}] {1} was correctly pressed.", moduleId, (ArrowDirection) btn);
                 _inputIx++;
-                if (_inputIx == 7)
+                if (_inputIx == 5)
                 {
                     _canInteract = false;
                     StartCoroutine(Victory());
@@ -352,7 +352,7 @@ public class YellowArrowsScript : MonoBehaviour
 
     IEnumerator TwitchHandleForcedSolve()
     {
-        while (_inputIx != 7)
+        while (_inputIx != 5)
         {
             ButtonSels[(int) _solutionDirs[_inputIx] % 4].OnInteract(); // Modulo 4, otherwise "Any" causes an IndexOutOfRange exception.
             yield return new WaitForSeconds(0.1f);
