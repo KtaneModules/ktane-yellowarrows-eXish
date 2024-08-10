@@ -6,10 +6,6 @@ using KModkit;
 using System;
 using System.Text.RegularExpressions;
 using Rnd = UnityEngine.Random;
-using UnityEngine.Timeline;
-using System.Linq.Expressions;
-using UnityEditor.Callbacks;
-using System.ComponentModel;
 
 public class YellowArrowsScript : MonoBehaviour
 {
