@@ -269,6 +269,8 @@ public class YellowArrowsScript : MonoBehaviour
         {
             if (moduleSolved || !_canInteract)
                 return false;
+            ButtonSels[btn].AddInteractionPunch(0.25f);
+            Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, ButtonSels[btn].transform);
             if (_solutionDirs[_inputIx] == ArrowDirection.Any || _solutionDirs[_inputIx] == (ArrowDirection) btn)
             {
                 Debug.LogFormat("[Yellow Arrows #{0}] {1} was correctly pressed.", moduleId, (ArrowDirection) btn);
@@ -281,7 +283,7 @@ public class YellowArrowsScript : MonoBehaviour
             }
             else
             {
-                Debug.LogFormat("[Yellow Arrows #{0}] {1} was pressed, when {2} was expected. Strike.", moduleId, _solutionDirs[_inputIx], (ArrowDirection) btn);
+                Debug.LogFormat("[Yellow Arrows #{0}] {1} was pressed, when {2} was expected. Strike.", moduleId, (ArrowDirection)btn, _solutionDirs[_inputIx]);
                 _canInteract = false;
                 Generate();
                 StartCoroutine(Delay());
