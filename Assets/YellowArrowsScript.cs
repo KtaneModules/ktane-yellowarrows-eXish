@@ -27,9 +27,9 @@ public class YellowArrowsScript : MonoBehaviour
     private bool moduleSolved;
 
     private int _displayedLetterIx;
+    private int _curRuleIx;
     private int _offset;
     private List<ArrowDirection> _solutionDirs;
-    private int _inputIx;
     private bool _canInteract;
 
     public enum ArrowDirection
@@ -234,18 +234,18 @@ public class YellowArrowsScript : MonoBehaviour
 
     private void Generate()
     {
-        _inputIx = 0;
-        _displayedLetterIx = Rnd.Range(0, 26);
+        _curRuleIx = _displayedLetterIx = Rnd.Range(0, 26);
         Debug.LogFormat("[Yellow Arrows #{0}] The starting row is {1}.", moduleId, "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[_displayedLetterIx]);
         _offset = Bomb.GetSerialNumber()[5] - '0' + 1;
-        int ix = _displayedLetterIx;
         _solutionDirs = new List<ArrowDirection>();
-        for (int i = 0; i < 5; i++)
-        {
-            ix = (ix + _offset) % 26;
-            _solutionDirs.Add(_rules[ix](_solutionDirs));
-            Debug.LogFormat("[Yellow Arrows #{0}] Press #{1} should be {2} according to row {3}.", moduleId, i + 1, _solutionDirs[i].ToString().ToUpperInvariant(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[ix]);
-        }
+        AddNextSolutionDir();
+    }
+
+    private void AddNextSolutionDir()
+    {
+        _curRuleIx = (_curRuleIx + _offset) % 26;
+        _solutionDirs.Add(_rules[_curRuleIx](_solutionDirs));
+        Debug.LogFormat("[Yellow Arrows #{0}] Press #{1} should be {2} according to row {3}.", moduleId, _solutionDirs.Count, _solutionDirs[_solutionDirs.Count - 1].ToString().ToUpperInvariant(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[_curRuleIx]);
     }
 
     private IEnumerator Delay()
@@ -271,19 +271,23 @@ public class YellowArrowsScript : MonoBehaviour
                 return false;
             ButtonSels[btn].AddInteractionPunch(0.25f);
             Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, ButtonSels[btn].transform);
-            if (_solutionDirs[_inputIx] == ArrowDirection.Any || _solutionDirs[_inputIx] == (ArrowDirection) btn)
+            if (_solutionDirs.Last() == ArrowDirection.Any || _solutionDirs.Last() == (ArrowDirection) btn)
             {
+                // Remember which button was pressed in case the rule said “Any”
+                _solutionDirs[_solutionDirs.Count - 1] = (ArrowDirection)btn;
                 Debug.LogFormat("[Yellow Arrows #{0}] {1} was correctly pressed.", moduleId, (ArrowDirection) btn);
-                _inputIx++;
-                if (_inputIx == 5)
+                if (_solutionDirs.Count == 5)
                 {
                     _canInteract = false;
+                    _solutionDirs = null;
                     StartCoroutine(Victory());
                 }
+                else
+                    AddNextSolutionDir();
             }
             else
             {
-                Debug.LogFormat("[Yellow Arrows #{0}] {1} was pressed, when {2} was expected. Strike.", moduleId, (ArrowDirection)btn, _solutionDirs[_inputIx]);
+                Debug.LogFormat("[Yellow Arrows #{0}] {1} was pressed, when {2} was expected. Strike.", moduleId, (ArrowDirection)btn, _solutionDirs.Last());
                 _canInteract = false;
                 Generate();
                 StartCoroutine(Delay());
@@ -326,9 +330,11 @@ public class YellowArrowsScript : MonoBehaviour
             yield return null;
             Debug.LogFormat("[Yellow Arrows #{0}] Twitch Plays received a RESET command. Resetting to intial state with no inputs.", moduleId);
             yield return "sendtochat Module {1} (Yellow Arrows) has been reset to the initial state with no inputs.";
+            _solutionDirs.Clear();
+            _curRuleIx = _displayedLetterIx;
+            AddNextSolutionDir();
             _canInteract = false;
             DisplayText.text = "";
-            _inputIx = 0;
             yield return new WaitForSeconds(0.5f);
             DisplayText.text = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[_displayedLetterIx].ToString();
             yield break;
@@ -354,9 +360,9 @@ public class YellowArrowsScript : MonoBehaviour
 
     IEnumerator TwitchHandleForcedSolve()
     {
-        while (_inputIx != 5)
+        while (_solutionDirs != null)
         {
-            ButtonSels[(int) _solutionDirs[_inputIx] % 4].OnInteract(); // Modulo 4, otherwise "Any" causes an IndexOutOfRange exception.
+            ButtonSels[(int) _solutionDirs.Last() % 4].OnInteract(); // Modulo 4, otherwise "Any" causes an IndexOutOfRange exception.
             yield return new WaitForSeconds(0.1f);
         }
         while (!moduleSolved)
