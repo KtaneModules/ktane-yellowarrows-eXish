@@ -360,9 +360,10 @@ public class YellowArrowsScript : MonoBehaviour
 
     IEnumerator TwitchHandleForcedSolve()
     {
+        while (!_canInteract && _solutionDirs != null) yield return true;
         while (_solutionDirs != null)
         {
-            ButtonSels[(int) _solutionDirs.Last() % 4].OnInteract(); // Modulo 4, otherwise "Any" causes an IndexOutOfRange exception.
+            ButtonSels[(int)_solutionDirs.Last() % 4].OnInteract(); // Modulo 4, otherwise "Any" causes an IndexOutOfRange exception.
             yield return new WaitForSeconds(0.1f);
         }
         while (!moduleSolved)
